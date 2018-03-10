@@ -13,16 +13,17 @@ import java.io.IOException;
  */
 public class HomeActivity extends Activity {
 
-    private ShellServer server;
+    private ShellDatabase database;
     private View mContentView;
     private WebView webview;
-    private static final String HOME_PAGE = "http://localhost:8080/home/";
+    private static final String HOME_PAGE = "https://duckduckgo.com";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
+        database = new ShellDatabase(getApplicationContext());
+        database.getApps();
         mContentView = findViewById(R.id.home_content);
         webview = findViewById(R.id.webview);
         webview.setWebViewClient(new WebViewClient());
@@ -30,35 +31,6 @@ public class HomeActivity extends Activity {
         webview.getSettings().setDomStorageEnabled(true);
         webview.setInitialScale(100);
         webview.loadUrl(HOME_PAGE);
-    }
-
-    public void onResume() {
-        super.onResume();
-        try {
-            server = new ShellServer(getApplicationContext());
-        } catch (IOException e) {
-            System.out.println("Failed to instantiate ShellServer");
-        }
-        try {
-            server.start();
-        } catch (IOException e) {
-            System.out.println("ShellServer failed to start");
-            e.printStackTrace();
-        }
-    }
-
-    public void onPause() {
-        super.onPause();
-        if(server != null) {
-            server.stop();
-        }
-    }
-
-    public void onDestroy() {
-        super.onDestroy();
-        if(server != null) {
-            server.stop();
-        }
     }
 
     /**
