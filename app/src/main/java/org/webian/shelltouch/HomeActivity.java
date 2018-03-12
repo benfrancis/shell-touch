@@ -7,6 +7,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Webian Shell Touch.
@@ -16,14 +17,15 @@ public class HomeActivity extends Activity {
     private ShellDatabase database;
     private View mContentView;
     private WebView webview;
-    private static final String HOME_PAGE = "https://duckduckgo.com";
+    private static final String HOME_PAGE = "http://home.tola.me.uk";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         database = new ShellDatabase(getApplicationContext());
-        database.getApps();
+        ArrayList apps = database.getApps();
+        System.out.println("Apps: " + apps);
         mContentView = findViewById(R.id.home_content);
         webview = findViewById(R.id.webview);
         webview.setWebViewClient(new WebViewClient());

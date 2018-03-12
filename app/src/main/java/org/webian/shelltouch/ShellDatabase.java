@@ -13,6 +13,7 @@ import com.couchbase.lite.SavedRevision;
 import com.couchbase.lite.android.AndroidContext;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -25,6 +26,11 @@ public class ShellDatabase {
 
     private Database database;
 
+    /**
+     * Constructor.
+     *
+     * @param context Android application context.
+     */
     public ShellDatabase(Context context) {
         System.out.println("Starting Shell database...");
         // Create a manager
@@ -40,10 +46,11 @@ public class ShellDatabase {
         } catch (CouchbaseLiteException e) {
             e.printStackTrace();
         }
-        // The properties that will be saved on the document
-        Map<String, Object> properties = new HashMap<String, Object>();
-        properties.put("type", "app");
+    }
 
+    private void populate() {
+        Map<String, Object> properties = null;
+        properties.put("type", "app");
         properties.put("name", "Twitter Lite");
         properties.put("short_name", "Twitter Lite");
         properties.put("description", "It's what's happening. From breaking news and "
@@ -54,7 +61,16 @@ public class ShellDatabase {
         properties.put("theme_color", "#ffffff");
         properties.put("scope", "/");
         String scope = "https://mobile.twitter.com/";
+        saveApp(scope, properties);
+    }
 
+    /**
+     * Save App.
+     *
+     * @param scope Scope URL of app
+     * @param properties An array of properties of the app to save.
+     */
+    public void saveApp(String scope, Map<String, Object> properties) {
         // Create a new document
         Document document = database.getDocument(scope);
         // Save the document to the database
@@ -64,14 +80,9 @@ public class ShellDatabase {
         } catch (CouchbaseLiteException e) {
             e.printStackTrace();
         }
-
-        SavedRevision revision = document.getCurrentRevision();
-        Map<String, Object> savedProperties = new HashMap<String, Object>();
-        savedProperties = revision.getProperties();
-        System.out.println("Retrieved app " + savedProperties.toString());
     }
 
-    public void getApps() {
+    public ArrayList getApps() {
         QueryEnumerator result = null;
         Query query = database.createAllDocumentsQuery();
         try {
@@ -80,10 +91,22 @@ public class ShellDatabase {
             System.out.println("Error getting apps from database");
         }
 
+        ArrayList apps = new ArrayList();
+
         for (Iterator<QueryRow> it = result; it.hasNext(); ) {
             QueryRow row = it.next();
             Document document = row.getDocument();
-            System.out.println("App: " + document.getProperty("name"));
+            apps.add(document.getProperties());
         }
+        return apps;
+    }
+
+    public Map<String, Object> getApp(String scope) {
+        Document document = database.getDocument(scope);
+        SavedRevision revision = document.getCurrentRevision();
+        Map<String, Object> properties = new HashMap<String, Object>();
+        properties = revision.getProperties();
+        System.out.println("Retrieved app " + properties.toString());
+        return properties;
     }
 }
