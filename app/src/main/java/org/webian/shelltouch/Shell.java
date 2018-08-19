@@ -1,20 +1,18 @@
 package org.webian.shelltouch;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.View;
-import org.mozilla.geckoview.GeckoRuntime;
-import org.mozilla.geckoview.GeckoRuntimeSettings;
-import org.mozilla.geckoview.GeckoSession;
-import org.mozilla.geckoview.GeckoView;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 /**
  * Webian Shell Touch.
  */
-public class HomeActivity extends Activity {
+public class Shell extends Activity {
 
     private ShellDatabase database;
     private View mContentView;
@@ -23,7 +21,7 @@ public class HomeActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.shell);
         database = new ShellDatabase(getApplicationContext());
         ArrayList apps = database.getApps();
         System.out.println("Apps: " + apps);
@@ -32,31 +30,57 @@ public class HomeActivity extends Activity {
     }
 
     /**
-     * Navigate to the home page.
+     * Back button clicked.
      *
      * @param view
      */
-    public void home(View view) {
+    public void handleBackButtonClick(View view) {
+        homeScreenWindow.goBack();
+    }
+
+    /**
+     * Home button clicked.
+     *
+     * @param view
+     */
+    public void handleHomeButtonClick(View view) {
       homeScreenWindow.goHome();
     }
 
     /**
-     * Navigate back in session history.
+     * Windows button clicked.
      *
      * @param view
      */
-    public void back(View view) {
-        homeScreenWindow.goBack();
+    public void handleWindowsButtonClick(View view) {
+      showTaskManager();
     }
+
+    public void showTaskManager() {
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        // Create new fragment and transaction
+        Fragment taskManager = new TaskManagerWindow();
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack
+        transaction.replace(R.id.homescreen_window, taskManager);
+        transaction.addToBackStack(null);
+
+        // Commit the transaction
+        transaction.commit();
+    }
+
 
     /**
      * Reload the current page.
      *
      * @param view
      */
-    public void reload(View view) {
+    /*public void reload(View view) {
         homeScreenWindow.reload();
-    }
+    }*/
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
