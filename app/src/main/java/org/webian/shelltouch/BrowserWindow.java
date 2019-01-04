@@ -10,19 +10,20 @@ import org.mozilla.geckoview.GeckoRuntime;
 import org.mozilla.geckoview.GeckoSession;
 import org.mozilla.geckoview.GeckoView;
 
+
 /**
- * Home Screen Window.
- *
- * Window in which to load the home page.
- */
-public class HomeScreenWindow extends Fragment {
+* Browser Window.
+*
+* A window with a URL bar and GeckoView.
+*/
+public class BrowserWindow extends Fragment {
 
     private GeckoView geckoview;
     private GeckoSession session;
     private static GeckoRuntime runtime;
-    private static final String HOME_PAGE = "https://duckduckgo.com";
+    private static final String NEW_TAB_PAGE = "http://webian.org";
 
-    public HomeScreenWindow(GeckoRuntime geckoRuntime) {
+    public BrowserWindow(GeckoRuntime geckoRuntime) {
         this.runtime = geckoRuntime;
     }
 
@@ -30,7 +31,7 @@ public class HomeScreenWindow extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home_screen_window, container, false);
+        return inflater.inflate(R.layout.fragment_browser_window, container, false);
     }
 
     @Override
@@ -38,11 +39,12 @@ public class HomeScreenWindow extends Fragment {
         super.onStart();
         View view = getView();
         // Find the GeckoView in our layout
-        geckoview = view.findViewById(R.id.geckoview);
+        geckoview = view.findViewById(R.id.browser_geckoview);
         session = new GeckoSession();
         session.open(runtime);
+        //geckoview.releaseSession();
         geckoview.setSession(session);
-        session.loadUri(HOME_PAGE);
+        session.loadUri(NEW_TAB_PAGE);
     }
 
     /**
@@ -58,5 +60,4 @@ public class HomeScreenWindow extends Fragment {
     public void reload() {
         session.reload();
     }
-
 }

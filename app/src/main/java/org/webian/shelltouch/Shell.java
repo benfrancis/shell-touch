@@ -7,6 +7,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 
+import org.mozilla.geckoview.GeckoRuntime;
+import org.mozilla.geckoview.GeckoRuntimeSettings;
+
 import java.util.ArrayList;
 
 
@@ -18,13 +21,21 @@ public class Shell extends Activity {
     private ShellDatabase database;
     private View shellContent;
     private HomeScreenWindow homeScreenWindow;
-    private TaskManager taskManager;
+    private WindowManager windowManager;
+    private static GeckoRuntime runtime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shell);
         shellContent = findViewById(R.id.shell_content);
+
+        // Start Gecko runtime
+        final GeckoRuntimeSettings.Builder runtimeSettingsBuilder =
+                new GeckoRuntimeSettings.Builder();
+        // Manually set display density for Raspberry Pi display
+        runtimeSettingsBuilder.displayDensityOverride(1);
+        runtime = GeckoRuntime.create(getApplicationContext(), runtimeSettingsBuilder.build());
 
         // Start database
         database = new ShellDatabase(getApplicationContext());
@@ -36,13 +47,13 @@ public class Shell extends Activity {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
         // Create home screen window.
-        homeScreenWindow = new HomeScreenWindow();
+        homeScreenWindow = new HomeScreenWindow(runtime);
         transaction.add(R.id.windows, homeScreenWindow);
 
-        // Create and hide task manager.
-        taskManager = new TaskManager();
-        transaction.add(R.id.windows, taskManager);
-        transaction.hide(taskManager);
+        // Create and hide window manager.
+        windowManager = new WindowManager();
+        transaction.add(R.id.windows, windowManager);
+        transaction.hide(windowManager);
 
         transaction.commit();
 
@@ -57,7 +68,7 @@ public class Shell extends Activity {
     public void home(View view) {
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.hide(taskManager);
+        transaction.hide(windowManager);
         transaction.show(homeScreenWindow);
         transaction.commit();
 
@@ -78,15 +89,15 @@ public class Shell extends Activity {
     }
 
     /**
-     * Show the task manager.
+     * Show the window manager.
      *
      * @param view
      */
-    public void showTaskManager(View view) {
+    public void showWindowManager(View view) {
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.hide(homeScreenWindow);
-        transaction.show(taskManager);
+        transaction.show(windowManager);
         transaction.commit();
 
         // Hide windows button and show add window button
@@ -96,13 +107,20 @@ public class Shell extends Activity {
         addWindowButton.setVisibility(View.VISIBLE);
     }
 
-    /**
-     * Reload the current page.
-     *
-     * @param view
-     */
-    public void reload(View view) {
-        homeScreenWindow.reload();
+    public void addWindow(View view) {
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        // Create new browser window.
+        BrowserWindow browserWindow = new BrowserWindow(runtime);
+        transaction.add(R.id.windows, browserWindow);
+        transaction.hide(windowManager);
+        transaction.commit();
+
+        // Hide add window button and show windows button
+        ImageButton windowsButton = (ImageButton) findViewById(R.id.windows_button);
+        ImageButton addWindowButton = (ImageButton) findViewById(R.id.add_window_button);
+        windowsButton.setVisibility(View.VISIBLE);
+        addWindowButton.setVisibility(View.GONE);
     }
 
     @Override
