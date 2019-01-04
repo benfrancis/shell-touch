@@ -5,7 +5,7 @@
     <application>
         <uses-library android:name="com.google.android.things" android:required="false" />
 
-        <activity android:name=".HomeActivity"
+        <activity android:name=".Shell"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

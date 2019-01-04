@@ -3,12 +3,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/home_content"
+    android:id="@+id/shell_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#5d9bc7"
-    tools:context="org.webian.shelltouch.HomeActivity">
+    tools:context="org.webian.shelltouch.Shell">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/status_bar"
@@ -82,20 +82,7 @@
             android:paddingRight="12dp"
             android:src="@drawable/home_button" />
 
-        <!--<ImageButton
-            android:id="@+id/reload_button"
-            android:layout_width="48dp"
-            android:layout_height="24dp"
-            android:layout_centerInParent="true"
-            android:layout_marginLeft="12dp"
-            android:layout_marginRight="12dp"
-            android:background="@drawable/toolbar_button_selector"
-            android:onClick="reload"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:src="@drawable/reload_button" />-->
-
-                <ImageButton
+        <ImageButton
             android:id="@+id/windows_button"
             android:layout_width="48dp"
             android:layout_height="24dp"
@@ -107,6 +94,19 @@
             android:paddingLeft="12dp"
             android:paddingRight="12dp"
             android:src="@drawable/windows_button" />
+
+        <ImageButton
+            android:id="@+id/add_window_button"
+            android:layout_width="48dp"
+            android:layout_height="24dp"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:background="@drawable/toolbar_button_selector"
+            android:visibility="gone"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:src="@drawable/add_button" />
 
     </LinearLayout>
 </LinearLayout>
